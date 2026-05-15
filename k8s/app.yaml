@@ -1,0 +1,68 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: expense-tracker-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: expense-tracker-backend
+  template:
+    metadata:
+      labels:
+        app: expense-tracker-backend
+    spec:
+      containers:
+      - name: backend
+        image: expense-tracker-backend:latest
+        imagePullPolicy: Never # Crucial: tells k8s to use the local docker image Jenkins just built
+        ports:
+        - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+spec:
+  type: LoadBalancer # K3s will automatically expose this on the AWS EC2 IP
+  selector:
+    app: expense-tracker-backend
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: expense-tracker-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: expense-tracker-frontend
+  template:
+    metadata:
+      labels:
+        app: expense-tracker-frontend
+    spec:
+      containers:
+      - name: frontend
+        image: expense-tracker-frontend:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: expense-tracker-frontend
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
