@@ -49,6 +49,22 @@ resource "aws_security_group" "expense_tracker_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  # Prometheus port
+  ingress {
+    from_port   = 9090
+    to_port     = 9090
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Grafana port
+  ingress {
+    from_port   = 3001
+    to_port     = 3001
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   # Allow all outbound traffic (so the server can download docker, updates, etc.)
   egress {
     from_port   = 0
