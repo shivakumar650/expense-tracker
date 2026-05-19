@@ -13,8 +13,10 @@ pipeline {
             steps {
                 dir('backend') {
                     sh 'docker build -t pashamwad123/expense-tracker-backend:latest .'
-                    // In a real environment, you need docker login credentials configured in Jenkins
-                    sh 'docker push pashamwad123/expense-tracker-backend:latest'
+                    withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                        sh 'echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin'
+                        sh 'docker push pashamwad123/expense-tracker-backend:latest'
+                    }
                 }
             }
         }
@@ -23,8 +25,10 @@ pipeline {
             steps {
                 dir('frontend') {
                     sh 'docker build -t pashamwad123/expense-tracker-frontend:latest .'
-                    // In a real environment, you need docker login credentials configured in Jenkins
-                    sh 'docker push pashamwad123/expense-tracker-frontend:latest'
+                    withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                        sh 'echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin'
+                        sh 'docker push pashamwad123/expense-tracker-frontend:latest'
+                    }
                 }
             }
         }
