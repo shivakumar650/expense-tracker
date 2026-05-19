@@ -12,8 +12,9 @@ pipeline {
         stage('Build Backend Image') {
             steps {
                 dir('backend') {
-                    // Jenkins automatically builds the backend Docker image
-                    sh 'docker build -t expense-tracker-backend:latest .'
+                    sh 'docker build -t pashamwad123/expense-tracker-backend:latest .'
+                    // In a real environment, you need docker login credentials configured in Jenkins
+                    sh 'docker push pashamwad123/expense-tracker-backend:latest'
                 }
             }
         }
@@ -21,15 +22,16 @@ pipeline {
         stage('Build Frontend Image') {
             steps {
                 dir('frontend') {
-                    // Jenkins automatically builds the frontend Docker image
-                    sh 'docker build -t expense-tracker-frontend:latest .'
+                    sh 'docker build -t pashamwad123/expense-tracker-frontend:latest .'
+                    // In a real environment, you need docker login credentials configured in Jenkins
+                    sh 'docker push pashamwad123/expense-tracker-frontend:latest'
                 }
             }
         }
         
         stage('Success') {
             steps {
-                echo 'CI/CD Pipeline ran successfully! Docker images have been built by Jenkins.'
+                echo 'CI/CD Pipeline ran successfully! Docker images have been built and pushed to Docker Hub.'
             }
         }
     }

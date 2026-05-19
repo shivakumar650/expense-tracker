@@ -85,6 +85,11 @@ resource "aws_instance" "expense_tracker_server" {
 
   vpc_security_group_ids = [aws_security_group.expense_tracker_sg.id]
 
+  root_block_device {
+    volume_size = 20
+    volume_type = "gp3"
+  }
+
   # User Data: This script runs automatically when the server boots up!
   # We will use it to automatically install the modern Docker and Docker Compose Plugin.
   user_data = <<-EOF

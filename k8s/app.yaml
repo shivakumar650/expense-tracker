@@ -15,15 +15,15 @@ spec:
     spec:
       containers:
       - name: backend
-        image: expense-tracker-backend:latest
-        imagePullPolicy: Never # Crucial: tells k8s to use the local docker image Jenkins just built
+        image: pashamwad123/expense-tracker-backend:latest
+        imagePullPolicy: Always # Changed to pull from Docker Hub
         ports:
         - containerPort: 5000
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: backend-service
+  name: backend
 spec:
   type: LoadBalancer # K3s will automatically expose this on the AWS EC2 IP
   selector:
@@ -49,8 +49,8 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: expense-tracker-frontend:latest
-        imagePullPolicy: Never
+        image: pashamwad123/expense-tracker-frontend:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 3000
 ---
