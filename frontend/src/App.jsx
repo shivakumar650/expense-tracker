@@ -13,7 +13,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isDarkMode, setIsDarkMode] = useState(true);
-
+  const [dateFilter, setDateFilter] = useState('all');
   // Theme Toggle Effect
   useEffect(() => {
     if (isDarkMode) {
@@ -81,6 +81,37 @@ function App() {
     }
   };
 
+  const filteredTransactions = transactions.filter(tx => {
+    if (dateFilter === 'all') return true;
+    const txDate = new Date(tx.date);
+    const now = new Date();
+    if (dateFilter === 'month') {
+        return txDate.getMonth() === now.getMonth() && txDate.getFullYear() === now.getFullYear();
+    }
+    if (dateFilter === 'week') {
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(now.getDate() - 7);
+        return txDate >= oneWeekAgo;
+    }
+    return true;
+  });
+
+  const handleExportCSV = () => {
+    const headers = ['Date,Description,Type,Amount'];
+    const csvData = filteredTransactions.map(tx => 
+        `"${new Date(tx.date).toLocaleDateString()}","${tx.description}",${tx.type},${tx.amount}`
+    );
+    const csv = [...headers, ...csvData].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'expense_report.csv';
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
+
+
   if (loading && transactions.length === 0) {
     return (
       <div className="app-container">
@@ -136,6 +167,24 @@ function App() {
             <input type="text" placeholder="Search..." />
           </div>
           <div className="topbar-actions">
+            <select 
+              className="form-select" 
+              style={{ width: 'auto', padding: '0.4rem 1rem', borderRadius: '20px' }}
+              value={dateFilter}
+              onChange={(e) => setDateFilter(e.target.value)}
+            >
+              <option value="all">All Time</option>
+              <option value="month">This Month</option>
+              <option value="week">This Week</option>
+            </select>
+            <button 
+              className="theme-btn" 
+              onClick={handleExportCSV} 
+              title="Export to CSV"
+              style={{ width: 'auto', padding: '0 1rem', borderRadius: '20px', fontSize: '0.875rem', fontWeight: 500 }}
+            >
+              Export CSV
+            </button>
             <button
               className="theme-btn"
               onClick={() => setIsDarkMode(!isDarkMode)}
@@ -161,11 +210,11 @@ function App() {
               {/* Left Column (Lists & Charts) */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                 <TransactionList
-                  transactions={transactions}
+                  transactions={filteredTransactions}
                   onDelete={handleDeleteTransaction}
                 />
                 <div style={{ height: '300px' }}>
-                  <ExpenseChart transactions={transactions} />
+                  <ExpenseChart transactions={filteredTransactions} />
                 </div>
               </div>
 

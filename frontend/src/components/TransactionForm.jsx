@@ -28,20 +28,27 @@ export default function TransactionForm({ onAddTransaction }) {
         }
     };
 
+    const activeColor = type === 'income' ? 'var(--income-color)' : 'var(--expense-color)';
+    const inputStyle = { 
+        background: 'var(--input-bg)', 
+        border: `1px solid ${type === 'income' ? 'rgba(16, 185, 129, 0.4)' : 'rgba(239, 68, 68, 0.4)'}`,
+        transition: 'all 0.3s ease'
+    };
+
     return (
-        <div className="glass-panel highlighted" style={{ height: '100%' }}>
-            <h2 style={{ marginBottom: '1.5rem', fontSize: '1.5rem', color: '#fff' }}>
+        <div className="glass-panel highlighted" style={{ height: '100%', background: 'var(--panel-bg)' }}>
+            <h2 style={{ marginBottom: '1.5rem', fontSize: '1.5rem', color: 'var(--text-primary)' }}>
                 New Entry
             </h2>
 
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', height: 'calc(100% - 3rem)', justifyContent: 'space-between' }}>
                 <div>
                     <div className="form-group">
-                        <label htmlFor="type" style={{ color: 'rgba(255,255,255,0.8)' }}>Transaction Type</label>
+                        <label htmlFor="type" style={{ color: 'var(--text-secondary)' }}>Transaction Type</label>
                         <select
                             id="type"
                             className="form-select"
-                            style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)' }}
+                            style={inputStyle}
                             value={type}
                             onChange={(e) => setType(e.target.value)}
                         >
@@ -51,12 +58,12 @@ export default function TransactionForm({ onAddTransaction }) {
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="description" style={{ color: 'rgba(255,255,255,0.8)' }}>Description</label>
+                        <label htmlFor="description" style={{ color: 'var(--text-secondary)' }}>Description / Category</label>
                         <input
                             type="text"
                             id="description"
                             className="form-input"
-                            style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)' }}
+                            style={inputStyle}
                             placeholder="e.g., Groceries, Salary, Rent"
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
@@ -65,12 +72,12 @@ export default function TransactionForm({ onAddTransaction }) {
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="amount" style={{ color: 'rgba(255,255,255,0.8)' }}>Amount</label>
+                        <label htmlFor="amount" style={{ color: 'var(--text-secondary)' }}>Amount</label>
                         <input
                             type="number"
                             id="amount"
                             className="form-input"
-                            style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)' }}
+                            style={inputStyle}
                             placeholder="$ 0.00"
                             step="0.01"
                             min="0.01"
@@ -85,7 +92,7 @@ export default function TransactionForm({ onAddTransaction }) {
                     type="submit"
                     className="btn-primary"
                     disabled={loading}
-                    style={{ background: '#fff', color: 'var(--bg-color)', marginTop: '2rem' }}
+                    style={{ background: activeColor, color: '#fff', marginTop: '2rem' }}
                 >
                     {loading ? 'Adding...' : 'Save New Entry'}
                 </button>
