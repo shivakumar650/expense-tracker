@@ -8,6 +8,25 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/shivakumar650/expense-tracker.git'
             }
         }
+
+        stage('Test Backend') {
+            steps {
+                dir('backend') {
+                    sh 'npm ci'
+                    sh 'npm test'
+                }
+            }
+        }
+
+        stage('Test Frontend') {
+            steps {
+                dir('frontend') {
+                    sh 'npm ci'
+                    sh 'npm run lint'
+                    sh 'npm run build'
+                }
+            }
+        }
         
         stage('Build Backend Image') {
             steps {

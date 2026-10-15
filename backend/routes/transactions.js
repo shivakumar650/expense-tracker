@@ -17,10 +17,10 @@ router.get('/', (req, res) => {
 // @route   POST /api/transactions
 // @desc    Add a new transaction
 router.post('/', (req, res) => {
-    const { amount, description, type, date } = req.body;
+    const { amount, description, type, date } = req.body || {};
 
-    if (!amount || !description || !type) {
-        return res.status(400).json({ error: 'Please provide amount, description, and type' });
+    if (!Number.isFinite(amount) || amount <= 0 || typeof description !== 'string' || !description.trim() || !['income', 'expense'].includes(type)) {
+        return res.status(400).json({ error: 'Provide a positive amount, description, and valid transaction type' });
     }
 
     try {

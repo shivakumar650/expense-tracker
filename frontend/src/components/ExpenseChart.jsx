@@ -7,6 +7,26 @@ import {
     Legend
 } from 'recharts';
 
+function CustomTooltip({ active, payload }) {
+    if (active && payload && payload.length) {
+        return (
+            <div style={{
+                background: 'rgba(15, 23, 42, 0.9)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                padding: '1rem',
+                borderRadius: '12px',
+                boxShadow: '0 10px 30px rgba(0,0,0,0.5)'
+            }}>
+                <p style={{ margin: 0, fontWeight: 600, color: '#fff' }}>
+                    {payload[0].name}: ${payload[0].value.toFixed(2)}
+                </p>
+            </div>
+        );
+    }
+    return null;
+}
+
 export default function ExpenseChart({ transactions }) {
     
     // Filter only expenses and group by description (as category)
@@ -34,26 +54,6 @@ export default function ExpenseChart({ transactions }) {
             </div>
         );
     }
-
-    const CustomTooltip = ({ active, payload }) => {
-        if (active && payload && payload.length) {
-            return (
-                <div style={{
-                    background: 'rgba(15, 23, 42, 0.9)',
-                    backdropFilter: 'blur(10px)',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    padding: '1rem',
-                    borderRadius: '12px',
-                    boxShadow: '0 10px 30px rgba(0,0,0,0.5)'
-                }}>
-                    <p style={{ margin: 0, fontWeight: 600, color: '#fff' }}>
-                        {payload[0].name}: ${payload[0].value.toFixed(2)}
-                    </p>
-                </div>
-            );
-        }
-        return null;
-    };
 
     return (
         <div className="glass-panel" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>

@@ -10,6 +10,10 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+app.get('/health', (req, res) => {
+    res.json({ status: 'ok' });
+});
+
 // Routes
 app.use('/api/transactions', transactionsRouter);
 
@@ -43,7 +47,10 @@ app.get('/api/summary', (req, res) => {
     }
 });
 
-// Start server
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+    });
+}
+
+module.exports = app;

@@ -2,7 +2,7 @@ const Database = require('better-sqlite3');
 const path = require('path');
 
 const dbPath = process.env.DB_PATH || path.join(__dirname, 'transactions.db');
-const db = new Database(dbPath, { verbose: console.log });
+const db = new Database(dbPath);
 
 // Create transactions table if it doesn't exist
 db.exec(`

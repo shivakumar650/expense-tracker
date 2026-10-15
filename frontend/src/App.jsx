@@ -7,6 +7,20 @@ import ExpenseChart from './components/ExpenseChart';
 
 const API_URL = import.meta.env.VITE_API_URL || '/api';
 
+async function loadDashboardData() {
+  const [txRes, sumRes] = await Promise.all([
+    fetch(`${API_URL}/transactions`),
+    fetch(`${API_URL}/summary`)
+  ]);
+
+  if (!txRes.ok || !sumRes.ok) throw new Error('Failed to fetch data');
+
+  return {
+    transactions: await txRes.json(),
+    summary: await sumRes.json()
+  };
+}
+
 function App() {
   const [transactions, setTransactions] = useState([]);
   const [summary, setSummary] = useState({});
@@ -23,26 +37,11 @@ function App() {
     }
   }, [isDarkMode]);
 
-  // Fetch initial data
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   const fetchData = async () => {
     try {
-      setLoading(true);
-      const [txRes, sumRes] = await Promise.all([
-        fetch(`${API_URL}/transactions`),
-        fetch(`${API_URL}/summary`)
-      ]);
-
-      if (!txRes.ok || !sumRes.ok) throw new Error('Failed to fetch data');
-
-      const txData = await txRes.json();
-      const sumData = await sumRes.json();
-
-      setTransactions(txData);
-      setSummary(sumData);
+      const data = await loadDashboardData();
+      setTransactions(data.transactions);
+      setSummary(data.summary);
     } catch (err) {
       console.error(err);
       setError('Could not connect to the server. Please ensure the backend is running.');
@@ -50,6 +49,28 @@ function App() {
       setLoading(false);
     }
   };
+
+  // Fetch initial data
+  useEffect(() => {
+    let isMounted = true;
+    loadDashboardData()
+      .then((data) => {
+        if (!isMounted) return;
+        setTransactions(data.transactions);
+        setSummary(data.summary);
+      })
+      .catch((err) => {
+        console.error(err);
+        if (isMounted) setError('Could not connect to the server. Please ensure the backend is running.');
+      })
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleAddTransaction = async (newTransaction) => {
     try {
@@ -64,6 +85,7 @@ function App() {
     } catch (err) {
       console.error(err);
       alert('Failed to add transaction');
+      throw err;
     }
   };
 

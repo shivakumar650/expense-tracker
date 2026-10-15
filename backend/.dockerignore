@@ -1,5 +1,8 @@
 node_modules
 npm-debug.log
+*.log
+*.db
+*.db-journal
 .git
 .gitignore
 README.md
